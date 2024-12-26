@@ -4,8 +4,7 @@ namespace Drupal\innowise_events\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\datetime\DrupalDateTime;
 
 /**
  * Form controller for Event edit forms.
@@ -13,37 +12,21 @@ use Drupal\Core\Datetime\DrupalDateTime;
 class EventForm extends ContentEntityForm {
 
   /**
-   * Checks and updates the status of the event.
+   * Updates the status of the event based on the end date.
    */
-  public function checkAndUpdateStatus() {
-    $end_date = $this->get('event_end_date')->value;
+  protected function updateEventStatus() {
+    $end_date = $this->entity->get('event_end_date')->value;
 
     if ($end_date) {
-      $current_date = new DrupalDateTime('now');
-      $event_end_date = new DrupalDateTime($end_date);
+      $current_date = new \DateTime('now', new \DateTimeZone('UTC'));
+      $event_end_date = new \DateTime($end_date, new \DateTimeZone('UTC'));
 
-      // Если текущая дата позже даты окончания события, статус становится неактивным.
-      if ($current_date > $event_end_date) {
-        if ($this->get('status')->value != 0) {
-          $this->set('status', 0);
-          $this->save();
-        }
-      } else {
-        if ($this->get('status')->value != 1) {
-          $this->set('status', 1);
-          $this->save();
-        }
-      }
-    }
-  }
+      // Update status based on the comparison between current date and event end date.
+      $new_status = $current_date > $event_end_date ? 0 : 1;
 
-  /**
-   * Triggers the status update when the entity is loaded.
-   */
-  public static function postLoad(EntityTypeInterface $entity_type, array $entities) {
-    foreach ($entities as $entity) {
-      if ($entity instanceof self) {
-        $entity->checkAndUpdateStatus();
+      // Only update status if it has changed.
+      if ($this->entity->get('status')->value != $new_status) {
+        $this->entity->set('status', $new_status);
       }
     }
   }
@@ -52,23 +35,24 @@ class EventForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    $entity = $this->entity;
+    // Update the event status before saving.
+    $this->updateEventStatus();
 
-    // Сохраняем сущность.
+    // Save the entity.
     $status = parent::save($form, $form_state);
 
-    // Добавляем сообщение о результате сохранения.
+    // Display messages based on the save status.
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('The event %title has been created.', ['%title' => $entity->label()]));
+        $this->messenger()->addMessage($this->t('The event %title has been created.', ['%title' => $this->entity->label()]));
         break;
 
       case SAVED_UPDATED:
-        drupal_set_message($this->t('The event %title has been updated.', ['%title' => $entity->label()]));
+        $this->messenger()->addMessage($this->t('The event %title has been updated.', ['%title' => $this->entity->label()]));
         break;
     }
 
-    // Перенаправляем пользователя на список сущностей после сохранения.
+    // Redirect to the collection page after saving.
     $form_state->setRedirect('entity.event.collection');
   }
 

@@ -49,14 +49,9 @@ public function getWeather(float $latitude, float $longitude): array {
 
     $data = json_decode($response->getBody()->getContents(), TRUE);
 
-    \Drupal::logger('innowise_events')->info('Weather API response: @response', [
-      '@response' => print_r($data, TRUE),
-    ]);
-
     return $data;
   }
   catch (\Exception $e) {
-    \Drupal::logger('innowise_events')->error('Weather API error: @message', ['@message' => $e->getMessage()]);
     return [];
   }
 }

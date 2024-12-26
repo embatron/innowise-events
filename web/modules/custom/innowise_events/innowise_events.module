@@ -5,19 +5,15 @@
  */
 function innowise_events_entity_presave(\Drupal\Core\Entity\EntityInterface $entity) {
   if ($entity->getEntityTypeId() === 'event') {
-    // Получаем выбранный город.
     $city = $entity->get('city')->value;
 
-    // Получаем координаты из JSON.
     $coordinates = innowise_events_get_city_coordinates($city);
 
     if ($coordinates) {
-      // Заполняем поля широты и долготы.
       $entity->set('latitude', $coordinates['latitude']);
       $entity->set('longitude', $coordinates['longitude']);
     }
     else {
-      // Логируем ошибку, если город не найден.
       \Drupal::logger('innowise_events')->error('Coordinates not found for city: @city', ['@city' => $city]);
     }
   }
@@ -51,21 +47,17 @@ function innowise_events_get_cities() {
  *   Ассоциативный массив с широтой и долготой или NULL, если город не найден.
  */
 function innowise_events_get_city_coordinates($city) {
-  // Путь к файлу JSON.
   $module_path = \Drupal::service('extension.list.module')->getPath('innowise_events');
   $file_path = $module_path . '/data/world_cities.json';
 
-  // Проверяем, существует ли файл.
   if (!file_exists($file_path)) {
     \Drupal::logger('innowise_events')->error('JSON file not found: @path', ['@path' => $file_path]);
     return NULL;
   }
 
-  // Читаем JSON-файл.
   $json = file_get_contents($file_path);
   $data = json_decode($json, TRUE);
 
-  // Ищем город.
   foreach ($data['cities'] as $city_data) {
     if (strcasecmp($city_data['name'], $city) === 0) {
       return [
@@ -75,7 +67,6 @@ function innowise_events_get_city_coordinates($city) {
     }
   }
 
-  // Город не найден.
   return NULL;
 }
 
@@ -84,7 +75,6 @@ function innowise_events_get_city_coordinates($city) {
  */
 function innowise_events_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, $view_mode, $langcode) {
   if ($entity->getEntityTypeId() === 'event') {
-    // Добавляем кнопку "Register".
     $build['register_button'] = [
       '#type' => 'link',
       '#weight' => 100,
@@ -101,7 +91,6 @@ function innowise_events_entity_view(array &$build, \Drupal\Core\Entity\EntityIn
       ],
     ];
 
-    // Область для сообщений.
     $build['register_message'] = [
       '#type' => 'container',
       '#weight' => 100,
