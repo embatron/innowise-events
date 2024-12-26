@@ -1,0 +1,16 @@
+parameters:
+  weather_api_key: '13e51a566e0054baddba7af2b04c11ba'
+
+services:
+  innowise_events.weather_service:
+    class: Drupal\innowise_events\Service\WeatherService
+    arguments: ['@http_client', '%weather_api_key%']
+
+  innowise_events.active_event_resolver:
+    class: Drupal\innowise_events\GraphQL\ActiveEventResolver
+
+  innowise_events.event_by_id_resolver:
+    class: Drupal\innowise_events\GraphQL\EventByIdResolver
+
+  innowise_events.register_event_resolver:
+    class: Drupal\innowise_events\GraphQL\RegisterEventResolver

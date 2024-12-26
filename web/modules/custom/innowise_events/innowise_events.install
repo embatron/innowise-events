@@ -1,0 +1,80 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function innowise_events_schema() {
+  return [
+    'event' => [
+      'description' => 'The table to store event entities.',
+      'fields' => [
+        'id' => [
+          'description' => 'Primary ID of the event.',
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ],
+        'uuid' => [
+          'description' => 'The universally unique identifier for this entity.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+        ],
+        'title' => [
+          'description' => 'Title of the event.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+        ],
+        'event_start_date' => [
+          'description' => 'Start date of the event.',
+          'type' => 'date',
+          'mysql_type' => 'DATE',
+          'not null' => TRUE,
+        ],
+        'event_end_date' => [
+          'description' => 'End date of the event.',
+          'type' => 'date',
+          'mysql_type' => 'DATE',
+          'not null' => TRUE,
+        ],
+        'description' => [
+          'description' => 'Detailed description of the event.',
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => FALSE,
+        ],
+        'city' => [
+          'description' => 'Name of the city where the event is held.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+        ],
+        'latitude' => [
+          'description' => 'Latitude of the event location.',
+          'type' => 'float',
+          'not null' => TRUE,
+        ],
+        'longitude' => [
+          'description' => 'Longitude of the event location.',
+          'type' => 'float',
+          'not null' => TRUE,
+        ],
+        'max_participants' => [
+          'description' => 'Maximum number of participants.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ],
+        'status' => [
+          'description' => 'Status of the event (active/inactive).',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 1,
+        ],
+      ],
+      'primary key' => ['id'],
+    ],
+  ];
+}

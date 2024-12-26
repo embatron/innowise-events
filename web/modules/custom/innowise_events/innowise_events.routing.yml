@@ -1,0 +1,33 @@
+event.register:
+  path: '/event/{event}/register'
+  defaults:
+    _controller: '\Drupal\innowise_events\Controller\EventController::registerAjax'
+    _title: 'Register for event'
+  requirements:
+    _permission: 'access content'
+    event: '\d+'
+
+innowise_events.view_participants:
+  path: '/admin/content/events/{event}/participants'
+  defaults:
+    _controller: '\Drupal\innowise_events\Controller\EventParticipantsController::viewParticipants'
+    _title: 'View Participants'
+  requirements:
+    _permission: 'administer event entities'
+    event: '\d+'
+
+innowise_events.admin_events_list:
+  path: '/admin/content/events'
+  defaults:
+    _controller: '\Drupal\innowise_events\Controller\AdminEventListController::listEvents'
+    _title: 'Events Management'
+  requirements:
+    _permission: 'administer event entities'
+
+innowise_events.event_list:
+  path: '/events'
+  defaults:
+    _controller: '\Drupal\innowise_events\Controller\EventListController::listEvents'
+    _title: 'Events'
+  requirements:
+    _permission: 'access content'

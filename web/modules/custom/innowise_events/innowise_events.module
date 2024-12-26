@@ -1,0 +1,136 @@
+<?php
+
+/**
+ * Implements hook_entity_presave().
+ */
+function innowise_events_entity_presave(\Drupal\Core\Entity\EntityInterface $entity) {
+  if ($entity->getEntityTypeId() === 'event') {
+    // Получаем выбранный город.
+    $city = $entity->get('city')->value;
+
+    // Получаем координаты из JSON.
+    $coordinates = innowise_events_get_city_coordinates($city);
+
+    if ($coordinates) {
+      // Заполняем поля широты и долготы.
+      $entity->set('latitude', $coordinates['latitude']);
+      $entity->set('longitude', $coordinates['longitude']);
+    }
+    else {
+      // Логируем ошибку, если город не найден.
+      \Drupal::logger('innowise_events')->error('Coordinates not found for city: @city', ['@city' => $city]);
+    }
+  }
+}
+
+/**
+ * Helper function to get cities list from JSON.
+ */
+function innowise_events_get_cities() {
+  $module_path = \Drupal::service('extension.list.module')->getPath('innowise_events');
+  $file_path = $module_path . '/data/world_cities.json';
+
+  if (!file_exists($file_path)) {
+    \Drupal::logger('innowise_events')->error('City JSON file not found: @file', ['@file' => $file_path]);
+    return [];
+  }
+
+  $json = file_get_contents($file_path);
+  $data = json_decode($json, TRUE);
+
+  return $data['cities'] ?? [];
+}
+
+/**
+ * Получает координаты города из JSON.
+ *
+ * @param string $city
+ *   Название города.
+ *
+ * @return array|null
+ *   Ассоциативный массив с широтой и долготой или NULL, если город не найден.
+ */
+function innowise_events_get_city_coordinates($city) {
+  // Путь к файлу JSON.
+  $module_path = \Drupal::service('extension.list.module')->getPath('innowise_events');
+  $file_path = $module_path . '/data/world_cities.json';
+
+  // Проверяем, существует ли файл.
+  if (!file_exists($file_path)) {
+    \Drupal::logger('innowise_events')->error('JSON file not found: @path', ['@path' => $file_path]);
+    return NULL;
+  }
+
+  // Читаем JSON-файл.
+  $json = file_get_contents($file_path);
+  $data = json_decode($json, TRUE);
+
+  // Ищем город.
+  foreach ($data['cities'] as $city_data) {
+    if (strcasecmp($city_data['name'], $city) === 0) {
+      return [
+        'latitude' => $city_data['latitude'],
+        'longitude' => $city_data['longitude'],
+      ];
+    }
+  }
+
+  // Город не найден.
+  return NULL;
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function innowise_events_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, $view_mode, $langcode) {
+  if ($entity->getEntityTypeId() === 'event') {
+    // Добавляем кнопку "Register".
+    $build['register_button'] = [
+      '#type' => 'link',
+      '#weight' => 100,
+      '#title' => t('Register'),
+      '#url' => \Drupal\Core\Url::fromRoute('event.register', ['event' => $entity->id()]),
+      '#attributes' => [
+        'class' => ['button', 'button--primary', 'use-ajax'],
+      ],
+      '#attached' => [
+        'library' => [
+          'core/drupal.ajax',
+          'innowise_events/register',
+        ],
+      ],
+    ];
+
+    // Область для сообщений.
+    $build['register_message'] = [
+      '#type' => 'container',
+      '#weight' => 100,
+      '#attributes' => ['id' => 'register-message'],
+    ];
+
+    $block_manager = \Drupal::service('plugin.manager.block');
+    $plugin_block = $block_manager->createInstance('event_weather_block', []);
+    $plugin_block->setContextValue('event', $entity); // Устанавливаем контекст
+    $build['event_weather'] = $plugin_block->build();
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function innowise_events_theme() {
+  return [
+    'event_weather' => [
+      'variables' => [
+        'weather' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function innowise_events_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'innowise_events/innowise_events_styles';
+}

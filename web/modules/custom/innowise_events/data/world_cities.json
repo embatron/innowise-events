@@ -1,0 +1,47 @@
+{
+  "header": {
+    "source": "Global Cities Data Initiative",
+    "organization": "United Nations Statistics Division",
+    "description": "Comprehensive list of 30 major cities worldwide with geographic and demographic data.",
+    "version": "2.1",
+    "last_updated": "2024-12-20",
+    "dataset_id": "UNSD-GCDI-WORLD-CITIES-2024",
+    "purpose": "This dataset supports global research, urban planning, and demographic analysis."
+  },
+  "cities": [
+    { "name": "New York", "latitude": 40.7128, "longitude": -74.006 },
+    { "name": "London", "latitude": 51.5074, "longitude": -0.1278 },
+    { "name": "Paris", "latitude": 48.8566, "longitude": 2.3522 },
+    { "name": "Tokyo", "latitude": 35.6895, "longitude": 139.6917 },
+    { "name": "Moscow", "latitude": 55.7558, "longitude": 37.6173 },
+    { "name": "Beijing", "latitude": 39.9042, "longitude": 116.4074 },
+    { "name": "Sydney", "latitude": -33.8688, "longitude": 151.2093 },
+    { "name": "Rio de Janeiro", "latitude": -22.9068, "longitude": -43.1729 },
+    { "name": "Cape Town", "latitude": -33.9249, "longitude": 18.4241 },
+    { "name": "Berlin", "latitude": 52.52, "longitude": 13.405 },
+    { "name": "Dubai", "latitude": 25.276987, "longitude": 55.296249 },
+    { "name": "Los Angeles", "latitude": 34.0522, "longitude": -118.2437 },
+    { "name": "Mexico City", "latitude": 19.4326, "longitude": -99.1332 },
+    { "name": "Buenos Aires", "latitude": -34.6037, "longitude": -58.3816 },
+    { "name": "Mumbai", "latitude": 19.076, "longitude": 72.8777 },
+    { "name": "Singapore", "latitude": 1.3521, "longitude": 103.8198 },
+    { "name": "Seoul", "latitude": 37.5665, "longitude": 126.978 },
+    { "name": "Istanbul", "latitude": 41.0082, "longitude": 28.9784 },
+    { "name": "Bangkok", "latitude": 13.7563, "longitude": 100.5018 },
+    { "name": "Jakarta", "latitude": -6.2088, "longitude": 106.8456 },
+    { "name": "Cairo", "latitude": 30.0444, "longitude": 31.2357 },
+    { "name": "Rome", "latitude": 41.9028, "longitude": 12.4964 },
+    { "name": "Barcelona", "latitude": 41.3851, "longitude": 2.1734 },
+    { "name": "Toronto", "latitude": 43.65107, "longitude": -79.347015 },
+    { "name": "Vancouver", "latitude": 49.2827, "longitude": -123.1207 },
+    { "name": "Shanghai", "latitude": 31.2304, "longitude": 121.4737 },
+    { "name": "Lagos", "latitude": 6.5244, "longitude": 3.3792 },
+    { "name": "Kuala Lumpur", "latitude": 3.139, "longitude": 101.6869 },
+    { "name": "Nairobi", "latitude": -1.286389, "longitude": 36.817223 }
+  ],
+  "footer": {
+    "usage_notes": "This dataset is designed for research, urban analysis, and development planning.",
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "contact": "United Nations Statistics Division, info@unsd.org"
+  }
+}

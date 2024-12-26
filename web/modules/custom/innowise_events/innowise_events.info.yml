@@ -1,0 +1,8 @@
+name: 'Innowise Events'
+type: module
+description: 'A module for event management and participant registration'
+core_version_requirement: ^10
+package: Custom
+dependencies:
+  - drupal:field
+  - drupal:node

@@ -1,0 +1,13 @@
+innowise_events_styles:
+  css:
+    theme:
+      css/style.css: {}
+
+register:
+  version: 1.x
+  js:
+    js/register.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal.ajax

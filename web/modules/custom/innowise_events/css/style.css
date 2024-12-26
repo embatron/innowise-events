@@ -1,0 +1,21 @@
+.event-weather {
+  margin-top: 50px;
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+.event-weather h3 {
+  color: white;
+}
+
+.event-weather-content {
+  display: inline-block;
+  width: auto;
+  padding: 20px 30px;
+  background: var(--color--primary-50);
+  color: white;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
