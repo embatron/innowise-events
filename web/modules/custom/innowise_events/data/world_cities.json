@@ -1,13 +1,4 @@
 {
-  "header": {
-    "source": "Global Cities Data Initiative",
-    "organization": "United Nations Statistics Division",
-    "description": "Comprehensive list of 30 major cities worldwide with geographic and demographic data.",
-    "version": "2.1",
-    "last_updated": "2024-12-20",
-    "dataset_id": "UNSD-GCDI-WORLD-CITIES-2024",
-    "purpose": "This dataset supports global research, urban planning, and demographic analysis."
-  },
   "cities": [
     { "name": "New York", "latitude": 40.7128, "longitude": -74.006 },
     { "name": "London", "latitude": 51.5074, "longitude": -0.1278 },
@@ -38,10 +29,5 @@
     { "name": "Lagos", "latitude": 6.5244, "longitude": 3.3792 },
     { "name": "Kuala Lumpur", "latitude": 3.139, "longitude": 101.6869 },
     { "name": "Nairobi", "latitude": -1.286389, "longitude": 36.817223 }
-  ],
-  "footer": {
-    "usage_notes": "This dataset is designed for research, urban analysis, and development planning.",
-    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
-    "contact": "United Nations Statistics Division, info@unsd.org"
-  }
+  ]
 }
