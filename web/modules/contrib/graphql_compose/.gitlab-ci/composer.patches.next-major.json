@@ -1,0 +1,16 @@
+{
+  "patches": {
+    "drupal/layout_paragraphs": {
+      "Drupal 11 support": "https://www.drupal.org/files/issues/2024-04-04/layout_paragraphs.2.0.x-dev.rector.patch"
+    },
+    "drupal/menu_item_extras": {
+      "Drupal 11 support": "https://www.drupal.org/files/issues/2024-03-18/menu_item_extras.3.0.2.rector.patch"
+    },
+    "drupal/paragraphs": {
+      "Drupal 11 support": "https://www.drupal.org/files/issues/2024-03-24/paragraphs.8.x-1.17.rector.patch"
+    },
+    "drupal/social_media_links": {
+      "Drupal 11 support": "https://www.drupal.org/files/issues/2024-06-02/social_media_links.2.x-dev.rector.patch"
+    }
+  }
+}

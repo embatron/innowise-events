@@ -1,0 +1,14 @@
+name: "GraphQL Compose Test Views"
+type: module
+description: "Provides a view test for graphql displays in views."
+package: Testing
+core_version_requirement: ^10.1 || ^11
+dependencies:
+  - drupal:block
+  - drupal:node
+  - drupal:views
+
+# Information added by Drupal.org packaging script on 2024-09-15
+version: '2.2.1'
+project: 'graphql_compose'
+datestamp: 1726380161
