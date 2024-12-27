@@ -31,3 +31,12 @@ innowise_events.event_list:
     _title: 'Events'
   requirements:
     _permission: 'access content'
+
+innowise_events.mock_event_register_ajax:
+  path: '/mock-event/{mock_event}/register-ajax'
+  defaults:
+    _controller: '\Drupal\innowise_events\Controller\MockEventController::registerAjax'
+    _title: 'Register for Mock Event'
+  requirements:
+    _permission: 'access content'
+    mock_event: '\d+'

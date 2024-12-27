@@ -99,9 +99,33 @@ function innowise_events_entity_view(array &$build, \Drupal\Core\Entity\EntityIn
 
     $block_manager = \Drupal::service('plugin.manager.block');
     $plugin_block = $block_manager->createInstance('event_weather_block', []);
-    $plugin_block->setContextValue('event', $entity); // Устанавливаем контекст
+    $plugin_block->setContextValue('event', $entity);
     $build['event_weather'] = $plugin_block->build();
   }
+
+  if ($entity->getEntityTypeId() === 'mock_event') {
+    // Добавляем кнопку регистрации.
+    $build['register_button'] = [
+      '#type' => 'link',
+      '#title' => t('Register'),
+      '#url' => \Drupal\Core\Url::fromRoute('innowise_events.mock_event_register_ajax', ['mock_event' => $entity->id()]),
+      '#attributes' => [
+        'class' => ['button', 'button--primary', 'use-ajax'],
+      ],
+      '#attached' => [
+        'library' => ['core/drupal.ajax', 'innowise_events/register'],
+      ],
+      '#weight' => 100,
+    ];
+
+    // Добавляем контейнер для сообщений.
+    $build['register_message'] = [
+      '#type' => 'container',
+      '#attributes' => ['id' => 'register-message'],
+      '#weight' => 101,
+    ];
+  }
+
 }
 
 /**
