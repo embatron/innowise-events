@@ -38,13 +38,13 @@ function innowise_events_get_cities() {
 }
 
 /**
- * Получает координаты города из JSON.
+ * Retrieves the coordinates of a city from JSON.
  *
  * @param string $city
- *   Название города.
+ *   The name of the city.
  *
  * @return array|null
- *   Ассоциативный массив с широтой и долготой или NULL, если город не найден.
+ *   An associative array with latitude and longitude, or NULL if the city is not found.
  */
 function innowise_events_get_city_coordinates($city) {
   $module_path = \Drupal::service('extension.list.module')->getPath('innowise_events');

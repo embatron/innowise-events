@@ -64,16 +64,13 @@ public function build() {
   $latitude = $event->get('latitude')->value;
   $longitude = $event->get('longitude')->value;
 
-  // Логируем координаты.
   \Drupal::logger('innowise_events')->info('Event coordinates: lat=@lat, lon=@lon', [
     '@lat' => $latitude,
     '@lon' => $longitude,
   ]);
 
-  // Получаем данные о погоде.
   $weather = $this->weatherService->getWeather($latitude, $longitude);
 
-  // Логируем данные погоды.
   \Drupal::logger('innowise_events')->info('Weather data: @weather', [
     '@weather' => print_r($weather, TRUE),
   ]);
@@ -98,8 +95,4 @@ public function build() {
     '#weight' => -10,
   ];
 }
-
-
-
-
 }

@@ -62,7 +62,6 @@ class Event extends ContentEntityBase {
 public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
   $fields = parent::baseFieldDefinitions($entity_type);
 
-  // Заголовок события.
   $fields['title'] = BaseFieldDefinition::create('string')
     ->setDescription(t('The title of the event.'))
     ->setRequired(TRUE)
@@ -83,13 +82,13 @@ $fields['event_start_date'] = BaseFieldDefinition::create('datetime')
   ->setLabel(t('Start Date'))
   ->setDescription(t('Start date of the event (without time).'))
   ->setSettings([
-    'datetime_type' => 'date', // Указываем, что используется только дата
+    'datetime_type' => 'date',
   ])
   ->setDisplayOptions('form', [
     'type' => 'datetime_default',
     'weight' => 1,
     'settings' => [
-      'datetime_type' => 'date', // Указываем, что используется только дата
+      'datetime_type' => 'date',
     ],
   ])
   ->setDisplayOptions('view', [
@@ -103,13 +102,13 @@ $fields['event_end_date'] = BaseFieldDefinition::create('datetime')
   ->setLabel(t('End Date'))
   ->setDescription(t('End date of the event (without time).'))
   ->setSettings([
-    'datetime_type' => 'date', // Указываем, что используется только дата
+    'datetime_type' => 'date',
   ])
   ->setDisplayOptions('form', [
     'type' => 'datetime_default',
     'weight' => 2,
     'settings' => [
-      'datetime_type' => 'date', // Указываем, что используется только дата
+      'datetime_type' => 'date',
     ],
   ])
   ->setDisplayOptions('view', [
@@ -119,7 +118,6 @@ $fields['event_end_date'] = BaseFieldDefinition::create('datetime')
   ])
   ->setRequired(TRUE);
 
-  // Описание события.
   $fields['description'] = BaseFieldDefinition::create('string_long')
     ->setLabel(t('Description'))
     ->setDescription(t('A detailed description of the event.'))
@@ -199,7 +197,6 @@ $fields['longitude'] = BaseFieldDefinition::create('float')
   ->setDisplayConfigurable('view', FALSE);
 
 
-  // Статус события.
   $fields['status'] = BaseFieldDefinition::create('boolean')
     ->setLabel(t('Active'))
     ->setDescription(t('Indicates whether the event is active.'))
@@ -217,8 +214,8 @@ $fields['longitude'] = BaseFieldDefinition::create('float')
 $fields['participants'] = BaseFieldDefinition::create('entity_reference')
   ->setLabel(t('Participants'))
   ->setDescription(t('Users registered for the event.'))
-  ->setSetting('target_type', 'user') // Ссылка на сущности пользователей.
-  ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED) // Позволяет хранить несколько участников.
+  ->setSetting('target_type', 'user')
+  ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
   ->setDisplayOptions('view', [
     'label' => 'hidden',
     'type' => 'entity_reference_label',

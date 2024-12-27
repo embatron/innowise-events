@@ -15,13 +15,11 @@ class EventListController extends ControllerBase {
    * Returns a renderable array for the list of events.
    */
   public function listEvents() {
-    // Загружаем все события из базы данных с проверкой доступа.
     $query = \Drupal::entityTypeManager()->getStorage('event')->getQuery();
-    $query->accessCheck(TRUE); // Устанавливаем проверку доступа.
+    $query->accessCheck(TRUE);
     $entity_ids = $query->execute();
     $events = \Drupal::entityTypeManager()->getStorage('event')->loadMultiple($entity_ids);
 
-    // Создаём таблицу с данными.
     $header = [
       $this->t('Title'),
       $this->t('City'),

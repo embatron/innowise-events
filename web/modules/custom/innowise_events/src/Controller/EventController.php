@@ -43,7 +43,6 @@ class EventController extends ControllerBase {
 public function registerAjax($event) {
   $response = new AjaxResponse();
 
-  // Загружаем сущность события.
   $event_entity = $this->entityTypeManager()->getStorage('event')->load($event);
 
   if (!$event_entity) {
@@ -53,21 +52,18 @@ public function registerAjax($event) {
 
   $user = $this->currentUser();
 
-  // Проверяем, авторизован ли пользователь.
   if ($user->isAnonymous()) {
     $login_url = \Drupal\Core\Url::fromRoute('user.login')->toString();
     $response->addCommand(new HtmlCommand('#register-message', '<div class="messages messages--error">You must <a href="' . $login_url . '">log in</a> to register for the event.</div>'));
     return $response;
   }
 
-  // Проверяем, активно ли событие.
   $status = $event_entity->get('status')->value;
   if (!$status) {
     $response->addCommand(new HtmlCommand('#register-message', '<div class="messages messages--error">This event is no longer active and registrations are not allowed.</div>'));
     return $response;
   }
 
-  // Проверяем, зарегистрирован ли пользователь.
   $is_registered = false;
   $participants = $event_entity->get('participants');
   foreach ($participants as $participant) {
@@ -82,14 +78,12 @@ public function registerAjax($event) {
     return $response;
   }
 
-  // Проверяем лимит участников.
   $max_participants = $event_entity->get('max_participants')->value;
   if (count($participants) >= $max_participants) {
     $response->addCommand(new HtmlCommand('#register-message', '<div class="messages messages--error">Registration is closed as the event is full.</div>'));
     return $response;
   }
 
-  // Добавляем пользователя в список участников.
   $event_entity->get('participants')->appendItem($user->id());
   $event_entity->save();
 
@@ -100,7 +94,7 @@ public function registerAjax($event) {
 
 
   /**
-   * Builds the event view page.
+   * The event view page.
    *
    * @param int $event
    *   The ID of the event.
@@ -120,7 +114,6 @@ public function registerAjax($event) {
       '#markup' => $this->t('<h2>@title</h2>', ['@title' => $event_entity->label()]),
     ];
 
-    // Добавляем кнопку "Register".
     $build['register_button'] = [
       '#type' => 'link',
       '#weight' => 100,

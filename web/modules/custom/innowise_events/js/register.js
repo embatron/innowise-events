@@ -7,14 +7,12 @@
         $(element).on("click", function (event) {
           event.preventDefault();
 
-          // Выполняем AJAX-запрос.
           $.ajax({
             url: $(this).attr("href"),
             type: "GET",
             success: function (response) {
               var messageContainer = $("#register-message");
 
-              // Устанавливаем сообщение в контейнер.
               if (response.status === "success") {
                 messageContainer.html(
                   '<div class="messages messages--status">' +

@@ -12,7 +12,7 @@ use Drupal\Core\Url;
 class AdminEventListController extends ControllerBase {
 
   /**
-   * Displays a list of all events.
+   * Displays a list of events.
    */
 public function listEvents() {
   $query = \Drupal::entityTypeManager()->getStorage('event')->getQuery();
@@ -20,12 +20,10 @@ public function listEvents() {
   $entity_ids = $query->execute();
   $events = \Drupal::entityTypeManager()->getStorage('event')->loadMultiple($entity_ids);
 
-  // Add "Add New Event" button.
   $add_new_button = Link::fromTextAndUrl($this->t('Add New Event'), Url::fromRoute('entity.event.add_form'))
     ->toRenderable();
   $add_new_button['#attributes'] = ['class' => ['button', 'button--primary', 'add-event-button']];
 
-  // Table headers.
   $header = [
     $this->t('ID'),
     $this->t('Title'),
@@ -85,6 +83,5 @@ public function listEvents() {
     ],
   ];
 }
-
 
 }
