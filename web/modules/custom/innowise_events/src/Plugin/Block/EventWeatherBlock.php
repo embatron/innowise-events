@@ -12,7 +12,8 @@ use Drupal\innowise_events\Service\WeatherService;
  *   id = "event_weather_block",
  *   admin_label = @Translation("Event Weather Block"),
  *   context_definitions = {
- *     "event" = @ContextDefinition("entity:event", required = TRUE, label = @Translation("Event"))
+ *     "event" = @ContextDefinition("entity:event", label = @Translation("Event"), required = FALSE),
+ *     "mock_event" = @ContextDefinition("entity:mock_event", label = @Translation("Mock Event"), required = FALSE)
  *   }
  * )
  */
@@ -54,20 +55,39 @@ class EventWeatherBlock extends BlockBase implements ContainerFactoryPluginInter
    */
 public function build() {
   $event = $this->getContextValue('event', FALSE);
+  $mock_event = $this->getContextValue('mock_event', FALSE);
 
-  if (!$event) {
+  if (!$event && !$mock_event) {
     return [
-      '#markup' => $this->t('Event context is not available.'),
+      '#markup' => $this->t('No valid event or mock event context is available.'),
     ];
   }
 
-  $latitude = $event->get('latitude')->value;
-  $longitude = $event->get('longitude')->value;
+  if ($event) {
+    $latitude = $event->get('latitude')->value;
+    $longitude = $event->get('longitude')->value;
 
-  \Drupal::logger('innowise_events')->info('Event coordinates: lat=@lat, lon=@lon', [
-    '@lat' => $latitude,
-    '@lon' => $longitude,
-  ]);
+    \Drupal::logger('innowise_events')->info('Event coordinates: lat=@lat, lon=@lon', [
+      '@lat' => $latitude,
+      '@lon' => $longitude,
+    ]);
+  }
+  elseif ($mock_event) {
+    $geolocation = $mock_event->get('field_event_s_location')->value;
+
+    if (empty($geolocation)) {
+      return [
+        '#markup' => $this->t('Geolocation data is not available for this mock event.'),
+      ];
+    }
+
+    [$latitude, $longitude] = explode(',', $geolocation);
+
+    \Drupal::logger('innowise_events')->info('Mock Event coordinates: lat=@lat, lon=@lon', [
+      '@lat' => $latitude,
+      '@lon' => $longitude,
+    ]);
+  }
 
   $weather = $this->weatherService->getWeather($latitude, $longitude);
 
@@ -89,7 +109,7 @@ public function build() {
     ],
     '#cache' => [
       'contexts' => ['url.path'],
-      'tags' => ['event:' . $event->id()],
+      'tags' => $event ? ['event:' . $event->id()] : ['mock_event:' . $mock_event->id()],
       'max-age' => 600,
     ],
     '#weight' => -10,
