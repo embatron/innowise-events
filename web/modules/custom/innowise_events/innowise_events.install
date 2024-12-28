@@ -15,7 +15,7 @@ function innowise_events_schema() {
           'not null' => TRUE,
         ],
         'uuid' => [
-          'description' => 'The universally unique identifier for this entity.',
+          'description' => 'The UUID for this entity.',
           'type' => 'varchar',
           'length' => 128,
           'not null' => TRUE,
@@ -27,19 +27,19 @@ function innowise_events_schema() {
           'not null' => TRUE,
         ],
         'event_start_date' => [
-          'description' => 'Start date of the event.',
+          'description' => 'Start date',
           'type' => 'date',
           'mysql_type' => 'DATE',
           'not null' => TRUE,
         ],
         'event_end_date' => [
-          'description' => 'End date of the event.',
+          'description' => 'End date',
           'type' => 'date',
           'mysql_type' => 'DATE',
           'not null' => TRUE,
         ],
         'description' => [
-          'description' => 'Detailed description of the event.',
+          'description' => 'Description of the event.',
           'type' => 'text',
           'size' => 'big',
           'not null' => FALSE,
