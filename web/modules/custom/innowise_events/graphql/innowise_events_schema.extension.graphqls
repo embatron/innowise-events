@@ -1,0 +1,8 @@
+extend type Query {
+  allActiveEvents: [Event]
+  eventById(id: ID!): Event
+}
+
+extend type Mutation {
+  registerForEvent(eventId: ID!, userId: ID!): String
+}

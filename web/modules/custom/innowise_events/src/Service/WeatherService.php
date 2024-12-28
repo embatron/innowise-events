@@ -4,16 +4,12 @@ namespace Drupal\innowise_events\Service;
 
 use GuzzleHttp\ClientInterface;
 
-/**
- * Provides weather-related services.
- */
 class WeatherService {
 
   protected ClientInterface $httpClient;
   protected string $apiKey;
 
   /**
-   * Constructs the WeatherService object.
    *
    * @param \GuzzleHttp\ClientInterface $http_client
    *   The HTTP client for making requests.
@@ -26,7 +22,6 @@ class WeatherService {
   }
 
   /**
-   * Fetches weather data based on coordinates.
    *
    * @param float $latitude
    *   The latitude of the location.
@@ -36,24 +31,24 @@ class WeatherService {
    * @return array
    *   The weather data.
    */
-public function getWeather(float $latitude, float $longitude): array {
-  try {
-    $response = $this->httpClient->get('https://api.openweathermap.org/data/2.5/weather', [
-      'query' => [
-        'lat' => $latitude,
-        'lon' => $longitude,
-        'appid' => $this->apiKey,
-        'units' => 'metric',
-      ],
-    ]);
+  public function getWeather(float $latitude, float $longitude): array {
+    try {
+      $response = $this->httpClient->get('https://api.openweathermap.org/data/2.5/weather', [
+        'query' => [
+          'lat' => $latitude,
+          'lon' => $longitude,
+          'appid' => $this->apiKey,
+          'units' => 'metric',
+        ],
+      ]);
 
-    $data = json_decode($response->getBody()->getContents(), TRUE);
+      $data = json_decode($response->getBody()->getContents(), TRUE);
 
-    return $data;
+      return $data;
+    }
+    catch (\Exception $e) {
+      return [];
+    }
   }
-  catch (\Exception $e) {
-    return [];
-  }
-}
 
 }

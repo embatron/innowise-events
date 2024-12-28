@@ -1,0 +1,13 @@
+type Event {
+  id: ID!
+  title: String
+  status: Boolean
+  location: String
+  startDate: String
+  endDate: String
+  maxParticipants: Int
+}
+
+type Mutation {
+  _empty: String
+}

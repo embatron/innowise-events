@@ -1,0 +1,1 @@
+https://travis-christopher.medium.com/building-a-custom-graphql-api-module-for-drupal-10-article-management-9df3a4a0a532 - article about GraphQL and Drupal 10
