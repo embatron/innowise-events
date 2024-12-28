@@ -6,6 +6,7 @@ type Event {
   startDate: String
   endDate: String
   maxParticipants: Int
+  participantsCount: Int
 }
 
 type Mutation {

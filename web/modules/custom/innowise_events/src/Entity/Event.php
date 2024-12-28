@@ -156,7 +156,7 @@ $fields['city'] = BaseFieldDefinition::create('list_string')
   ->setRequired(TRUE);
 
 $fields['max_participants'] = BaseFieldDefinition::create('integer')
-  ->setLabel(t('Participants'))
+  ->setLabel(t('Max Participants'))
   ->setDescription(t('The maximum number of participants allowed for this event.'))
   ->setRequired(TRUE)
   ->setDefaultValue(1)
@@ -216,15 +216,18 @@ $fields['participants'] = BaseFieldDefinition::create('entity_reference')
   ->setDescription(t('Users registered for the event.'))
   ->setSetting('target_type', 'user')
   ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
-  ->setDisplayOptions('view', [
-    'label' => 'hidden',
-    'type' => 'entity_reference_label',
+  ->setDisplayOptions('form', [
+    'type' => 'entity_reference_autocomplete',
     'weight' => 8,
   ])
-  ->setDisplayOptions('view', [])
+  ->setDisplayOptions('view', [
+    'label' => 'hidden',
+    'type' => 'hidden',
+    'weight' => 8,
+  ])
   ->setDisplayConfigurable('form', TRUE)
   ->setDisplayConfigurable('view', TRUE);
 
-  return $fields;
+return $fields;
 }
 }

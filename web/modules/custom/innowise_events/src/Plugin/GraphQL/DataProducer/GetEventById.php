@@ -47,11 +47,12 @@ class GetEventById extends DataProducerPluginBase {
     return [
       'id' => $event->id(),
       'title' => $event->label(),
-      'status' => $event->get('field_event_s_status')->value,
+      'status' => $event->get('field_event_s_status')->value ? 'Active' : 'Completed',
       'location' => $event->get('field_event_s_location')->value,
       'startDate' => $event->get('field_start_date')->value,
       'endDate' => $event->get('field_end_date')->value,
       'maxParticipants' => $event->get('field_max_participants')->value,
+      'participantsCount' => count($event->get('field_participants')->referencedEntities()),
     ];
   }
 }

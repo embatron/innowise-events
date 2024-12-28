@@ -5,16 +5,40 @@
  */
 function innowise_events_entity_presave(\Drupal\Core\Entity\EntityInterface $entity) {
   if ($entity->getEntityTypeId() === 'event') {
+    $end_date = $entity->get('event_end_date')->value;
+    if ($end_date) {
+      $current_date = new \DateTime();
+      $event_end_date = new \DateTime($end_date);
+
+      if ($event_end_date < $current_date) {
+        $entity->set('status', 0);
+      } else {
+        $entity->set('status', 1);
+      }
+    }
+
+    // Обработка координат города.
     $city = $entity->get('city')->value;
-
     $coordinates = innowise_events_get_city_coordinates($city);
-
     if ($coordinates) {
       $entity->set('latitude', $coordinates['latitude']);
       $entity->set('longitude', $coordinates['longitude']);
-    }
-    else {
+    } else {
       \Drupal::logger('innowise_events')->error('Coordinates not found for city: @city', ['@city' => $city]);
+    }
+  }
+
+  if ($entity->getEntityTypeId() === 'mock_event') {
+    $end_date = $entity->get('field_end_date')->value;
+    if ($end_date) {
+      $current_date = new \DateTime();
+      $event_end_date = new \DateTime($end_date);
+
+      if ($event_end_date < $current_date) {
+        $entity->set('field_event_s_status', 0);
+      } else {
+        $entity->set('field_event_s_status', 1);
+      }
     }
   }
 }
@@ -132,4 +156,82 @@ function innowise_events_theme() {
  */
 function innowise_events_page_attachments(array &$attachments) {
   $attachments['#attached']['library'][] = 'innowise_events/innowise_events_styles';
+}
+
+/**
+ * Implements hook_cron().
+ */
+function innowise_events_cron() {
+  $logger = \Drupal::logger('innowise_events');
+
+  $storage = \Drupal::entityTypeManager()->getStorage('event');
+  $query = $storage->getQuery()
+    ->accessCheck(FALSE)
+    ->execute();
+
+  $updated_events = [];
+  if (!empty($query)) {
+    $entities = $storage->loadMultiple($query);
+    foreach ($entities as $entity) {
+      $end_date = $entity->get('event_end_date')->value;
+      if ($end_date) {
+        $current_date = new \DateTime();
+        $event_end_date = new \DateTime($end_date);
+
+        if ($event_end_date < $current_date) {
+          $entity->set('status', 0);
+          $entity->save();
+          $updated_events[] = $entity->id();
+        }
+      }
+    }
+  }
+
+  if (!empty($updated_events)) {
+    $logger->info('Updated event entities: @ids', [
+      '@ids' => implode(', ', $updated_events),
+    ]);
+  } else {
+    $logger->info('No event entities were updated.');
+  }
+
+  $mock_storage = \Drupal::entityTypeManager()->getStorage('mock_event');
+  $mock_query = $mock_storage->getQuery()
+    ->accessCheck(FALSE)
+    ->execute();
+
+  $updated_mock_events = [];
+  if (!empty($mock_query)) {
+    $mock_entities = $mock_storage->loadMultiple($mock_query);
+    foreach ($mock_entities as $mock_entity) {
+      $end_date = $mock_entity->get('field_end_date')->value;
+      if ($end_date) {
+        $current_date = new \DateTime();
+        $mock_event_end_date = new \DateTime($end_date);
+
+        if ($mock_event_end_date < $current_date) {
+          $mock_entity->set('field_event_s_status', 0);
+          $mock_entity->save();
+          $updated_mock_events[] = $mock_entity->id();
+        }
+      }
+    }
+  }
+
+  if (!empty($updated_mock_events)) {
+    $logger->info('Updated mock_event entities: @ids', [
+      '@ids' => implode(', ', $updated_mock_events),
+    ]);
+  } else {
+    $logger->info('No mock_event entities were updated.');
+  }
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function innowise_events_entity_view_alter(array &$build, \Drupal\Core\Entity\EntityInterface $entity, $view_mode) {
+  if ($entity->getEntityTypeId() === 'event' && isset($build['participants'])) {
+    unset($build['participants']);
+  }
 }

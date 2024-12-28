@@ -10,7 +10,7 @@ use Drupal\graphql\GraphQL\ResolverRegistryInterface;
  * @SchemaExtension(
  *   id = "innowise_events_schema",
  *   name = "Innowise Events Schema",
- *   description = "Schema extension for the Innowise Events module.",
+ *   description = "Schema extension for the Innowise Test module",
  *   schema = "default"
  * )
  */
@@ -30,7 +30,7 @@ class InnowiseEventsSchemaExtension extends SdlSchemaExtensionPluginBase {
       $builder->produce('get_event_by_id')
         ->map('id', $builder->fromArgument('id'))
     );
-    
+
     $registry->addFieldResolver('Mutation', 'registerForEvent',
       $builder->produce('register_for_event')
         ->map('eventId', $builder->fromArgument('eventId'))
