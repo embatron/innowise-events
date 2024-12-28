@@ -19,19 +19,15 @@ use Drupal\innowise_events\Service\WeatherService;
  */
 class EventWeatherBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * The weather service.
+   *
+   * @var \Drupal\innowise_events\Service\WeatherService
+   */
   protected WeatherService $weatherService;
 
   /**
    * Constructs a new EventWeatherBlock instance.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin ID for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\innowise_events\Service\WeatherService $weatherService
-   *   The weather service to fetch weather data.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, WeatherService $weatherService) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -53,66 +49,78 @@ class EventWeatherBlock extends BlockBase implements ContainerFactoryPluginInter
   /**
    * {@inheritdoc}
    */
-public function build() {
-  $event = $this->getContextValue('event', FALSE);
-  $mock_event = $this->getContextValue('mock_event', FALSE);
+  public function build() {
+    $entity = $this->getContextValue('event') ?? $this->getContextValue('mock_event');
 
-  if (!$event && !$mock_event) {
-    return [
-      '#markup' => $this->t('No valid event or mock event context is available.'),
-    ];
-  }
-
-  if ($event) {
-    $latitude = $event->get('latitude')->value;
-    $longitude = $event->get('longitude')->value;
-
-    \Drupal::logger('innowise_events')->info('Event coordinates: lat=@lat, lon=@lon', [
-      '@lat' => $latitude,
-      '@lon' => $longitude,
-    ]);
-  }
-  elseif ($mock_event) {
-    $geolocation = $mock_event->get('field_event_s_location')->value;
-
-    if (empty($geolocation)) {
+    if (!$entity) {
       return [
-        '#markup' => $this->t('Geolocation data is not available for this mock event.'),
+        '#markup' => $this->t('No valid event or mock event context is available.'),
       ];
     }
 
-    [$latitude, $longitude] = explode(',', $geolocation);
+    $coordinates = $this->getCoordinates($entity);
 
-    \Drupal::logger('innowise_events')->info('Mock Event coordinates: lat=@lat, lon=@lon', [
-      '@lat' => $latitude,
-      '@lon' => $longitude,
-    ]);
-  }
+    if (!$coordinates) {
+      return [
+        '#markup' => $this->t('Geolocation data is not available for this entity.'),
+      ];
+    }
 
-  $weather = $this->weatherService->getWeather($latitude, $longitude);
+    [$latitude, $longitude] = $coordinates;
 
-  \Drupal::logger('innowise_events')->info('Weather data: @weather', [
-    '@weather' => print_r($weather, TRUE),
-  ]);
+    $weather = $this->weatherService->getWeather($latitude, $longitude);
 
-  if (empty($weather)) {
+    if (empty($weather)) {
+      return [
+        '#markup' => $this->t('Weather data is not available.'),
+      ];
+    }
+
     return [
-      '#markup' => $this->t('Weather data is not available.'),
+      '#theme' => 'event_weather',
+      '#weather' => $weather,
+      '#attributes' => [
+        'class' => ['event-weather-block', 'event-weather-block-bottom'],
+      ],
+      '#cache' => [
+        'contexts' => ['url.path'],
+        'tags' => [$entity->getEntityTypeId() . ':' . $entity->id()],
+        'max-age' => 600,
+      ],
+      '#weight' => -10,
     ];
   }
 
-  return [
-    '#theme' => 'event_weather',
-    '#weather' => $weather,
-    '#attributes' => [
-      'class' => ['event-weather-block', 'event-weather-block-bottom'],
-    ],
-    '#cache' => [
-      'contexts' => ['url.path'],
-      'tags' => $event ? ['event:' . $event->id()] : ['mock_event:' . $mock_event->id()],
-      'max-age' => 600,
-    ],
-    '#weight' => -10,
-  ];
-}
+  /**
+   * Retrieves coordinates from the entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
+   *
+   * @return array|null
+   *   An array with latitude and longitude, or NULL if not available.
+   */
+  protected function getCoordinates($entity) {
+    if ($entity->getEntityTypeId() === 'event') {
+      $latitude = $entity->get('latitude')->value;
+      $longitude = $entity->get('longitude')->value;
+
+      if (is_numeric($latitude) && is_numeric($longitude)) {
+        return [$latitude, $longitude];
+      }
+    }
+
+    if ($entity->getEntityTypeId() === 'mock_event') {
+      $geolocation = $entity->get('field_event_s_location')->value;
+      if (!empty($geolocation)) {
+        $coordinates = explode(',', $geolocation);
+        if (count($coordinates) === 2 && is_numeric($coordinates[0]) && is_numeric($coordinates[1])) {
+          return $coordinates;
+        }
+      }
+    }
+
+    return NULL;
+  }
+
 }

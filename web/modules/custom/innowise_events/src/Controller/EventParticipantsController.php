@@ -47,32 +47,49 @@ class EventParticipantsController extends ControllerBase {
    *   A render array.
    */
   public function viewParticipants($event) {
+    // Load the event entity.
     $event_entity = $this->entityTypeManager->getStorage('event')->load($event);
 
     if (!$event_entity) {
       throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
     }
 
-    $participants = $event_entity->get('participants')->referencedEntities();
+    // Get participant IDs.
+    $participant_ids = array_column($event_entity->get('participants')->getValue(), 'target_id');
 
+    // Load participant entities.
+    $participants = $this->entityTypeManager->getStorage('user')->loadMultiple($participant_ids);
+
+    // Define table headers.
     $header = [
-      $this->t('User ID'),
-      $this->t('Username'),
+      'User ID',
+      'Username',
     ];
 
+    // Build table rows.
     $rows = [];
-    foreach ($participants as $participant) {
-      $rows[] = [
-        $participant->id(),
-        $participant->getDisplayName(),
-      ];
+    foreach ($participant_ids as $id) {
+      if (isset($participants[$id])) {
+        $participant = $participants[$id];
+        $rows[] = [
+          $participant->id(),
+          $participant->getDisplayName(),
+        ];
+      }
+      else {
+        $rows[] = [
+          $id,
+          'User not found (deleted or missing)',
+        ];
+      }
     }
 
+    // Render the table.
     return [
       '#type' => 'table',
       '#header' => $header,
       '#rows' => $rows,
-      '#empty' => $this->t('No participants for this event.'),
+      '#empty' => 'No participants for this event.',
     ];
   }
 

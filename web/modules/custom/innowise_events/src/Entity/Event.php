@@ -46,8 +46,6 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *   field_ui_base_route = "entity.event.collection"
  * )
  */
-
-
 class Event extends ContentEntityBase {
 
   /**
@@ -59,175 +57,164 @@ class Event extends ContentEntityBase {
    * @return \Drupal\Core\Field\BaseFieldDefinition[]
    *   An array of base field definitions.
    */
-public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
-  $fields = parent::baseFieldDefinitions($entity_type);
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    $fields = parent::baseFieldDefinitions($entity_type);
 
-  $fields['title'] = BaseFieldDefinition::create('string')
-    ->setDescription(t('The title of the event.'))
-    ->setRequired(TRUE)
-    ->setSettings([
-      'max_length' => 255,
-    ])
-    ->setDisplayOptions('view', [
-      'label' => 'above',
-      'type' => 'string',
-      'weight' => 0,
-    ])
-    ->setDisplayOptions('form', [
-      'type' => 'string_textfield',
-      'weight' => 0,
-    ]);
+    // Title.
+    $fields['title'] = BaseFieldDefinition::create('string')
+      ->setDescription(t('The title of the event.'))
+      ->setRequired(TRUE)
+      ->setSettings(['max_length' => 255])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => 0,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => 0,
+      ]);
 
-$fields['event_start_date'] = BaseFieldDefinition::create('datetime')
-  ->setLabel(t('Start Date'))
-  ->setDescription(t('Start date of the event (without time).'))
-  ->setSettings([
-    'datetime_type' => 'date',
-  ])
-  ->setDisplayOptions('form', [
-    'type' => 'datetime_default',
-    'weight' => 1,
-    'settings' => [
-      'datetime_type' => 'date',
-    ],
-  ])
-  ->setDisplayOptions('view', [
-    'label' => 'above',
-    'type' => 'datetime_default',
-    'weight' => 1,
-  ])
-  ->setRequired(TRUE);
+    // Start date.
+    $fields['event_start_date'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(t('Start Date'))
+      ->setDescription(t('Start date of the event (without time).'))
+      ->setSettings(['datetime_type' => 'date'])
+      ->setRequired(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'datetime_default',
+        'weight' => 1,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'datetime_default',
+        'weight' => 1,
+      ]);
 
-$fields['event_end_date'] = BaseFieldDefinition::create('datetime')
-  ->setLabel(t('End Date'))
-  ->setDescription(t('End date of the event (without time).'))
-  ->setSettings([
-    'datetime_type' => 'date',
-  ])
-  ->setDisplayOptions('form', [
-    'type' => 'datetime_default',
-    'weight' => 2,
-    'settings' => [
-      'datetime_type' => 'date',
-    ],
-  ])
-  ->setDisplayOptions('view', [
-    'label' => 'above',
-    'type' => 'datetime_default',
-    'weight' => 2,
-  ])
-  ->setRequired(TRUE);
+    // End date.
+    $fields['event_end_date'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(t('End Date'))
+      ->setDescription(t('End date of the event (without time).'))
+      ->setSettings(['datetime_type' => 'date'])
+      ->setRequired(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'datetime_default',
+        'weight' => 2,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'datetime_default',
+        'weight' => 2,
+      ]);
 
-  $fields['description'] = BaseFieldDefinition::create('string_long')
-    ->setLabel(t('Description'))
-    ->setDescription(t('A detailed description of the event.'))
-    ->setDisplayOptions('view', [
-      'label' => 'above',
-      'type' => 'text_default',
-      'weight' => 3,
-    ])
-    ->setDisplayOptions('form', [
-      'type' => 'text_textarea',
-      'weight' => 3,
-    ]);
+    // Description.
+    $fields['description'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(t('Description'))
+      ->setDescription(t('A detailed description of the event.'))
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'text_default',
+        'weight' => 3,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'text_textarea',
+        'weight' => 3,
+      ]);
 
-$fields['city'] = BaseFieldDefinition::create('list_string')
-  ->setLabel(t('Location'))
-  ->setDescription(t('Select a city from the list.'))
-  ->setSettings([
-    'allowed_values' => array_reduce(
-      innowise_events_get_cities(),
-      function ($carry, $city) {
-        $carry[$city['name']] = $city['name'];
-        return $carry;
-      },
-      []
-    ),
-  ])
-  ->setDisplayOptions('form', [
-    'type' => 'options_select',
-    'weight' => 4,
-  ])
-  ->setDisplayOptions('view', [
-    'label' => 'above',
-    'type' => 'string',
-    'weight' => 4,
-  ])
-  ->setRequired(TRUE);
+    // City.
+    $fields['city'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Location'))
+      ->setDescription(t('Select a city from the list.'))
+      ->setSettings([
+        'allowed_values' => array_reduce(
+          innowise_events_get_cities(),
+          function ($carry, $city) {
+            $carry[$city['name']] = $city['name'];
+            return $carry;
+          },
+          []
+        ),
+      ])
+      ->setRequired(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'weight' => 4,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => 4,
+      ]);
 
-$fields['max_participants'] = BaseFieldDefinition::create('integer')
-  ->setLabel(t('Max Participants'))
-  ->setDescription(t('The maximum number of participants allowed for this event.'))
-  ->setRequired(TRUE)
-  ->setDefaultValue(1)
-  ->setSetting('unsigned', TRUE)
-  ->setSetting('min', 1)
-  ->setDisplayOptions('form', [
-    'type' => 'number',
-    'weight' => 5,
-    'settings' => [
-      'min' => 1,
-      'step' => 1,
-    ],
-  ])
-  ->setDisplayOptions('view', [
-    'label' => 'above',
-    'type' => 'number_integer',
-    'weight' => 5,
-  ])
-  ->setDisplayConfigurable('form', TRUE)
-  ->setDisplayConfigurable('view', TRUE);
+    // Max participants.
+    $fields['max_participants'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Max Participants'))
+      ->setDescription(t('The maximum number of participants allowed for this event.'))
+      ->setRequired(TRUE)
+      ->setSetting('unsigned', TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'number',
+        'weight' => 5,
+        'settings' => [
+          'min' => 1,
+          'step' => 1,
+        ],
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'number_integer',
+        'weight' => 5,
+      ]);
 
-$fields['latitude'] = BaseFieldDefinition::create('float')
-  ->setLabel(t('Latitude'))
-  ->setDescription(t('The latitude of the event location.'))
-  ->setRequired(TRUE)
-  ->setDefaultValue(0.0)
-  ->setDisplayOptions('view', [])
-  ->setDisplayConfigurable('form', FALSE)
-  ->setDisplayConfigurable('view', FALSE);
+    // Latitude.
+    $fields['latitude'] = BaseFieldDefinition::create('float')
+      ->setLabel(t('Latitude'))
+      ->setDescription(t('The latitude of the event location.'))
+      ->setRequired(TRUE)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE);
 
-$fields['longitude'] = BaseFieldDefinition::create('float')
-  ->setLabel(t('Longitude'))
-  ->setDescription(t('The longitude of the event location.'))
-  ->setRequired(TRUE)
-  ->setDefaultValue(0.0)
-  ->setDisplayOptions('view', [])
-  ->setDisplayConfigurable('form', FALSE)
-  ->setDisplayConfigurable('view', FALSE);
+    // Longitude.
+    $fields['longitude'] = BaseFieldDefinition::create('float')
+      ->setLabel(t('Longitude'))
+      ->setDescription(t('The longitude of the event location.'))
+      ->setRequired(TRUE)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE);
 
+    // Status.
+    $fields['status'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Active'))
+      ->setDescription(t('Indicates whether the event is active.'))
+      ->setDefaultValue(TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'boolean',
+        'weight' => 6,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+        'weight' => 6,
+      ]);
 
-  $fields['status'] = BaseFieldDefinition::create('boolean')
-    ->setLabel(t('Active'))
-    ->setDescription(t('Indicates whether the event is active.'))
-    ->setDefaultValue(TRUE)
-    ->setDisplayOptions('view', [
-      'label' => 'above',
-      'type' => 'boolean',
-      'weight' => 6,
-    ])
-    ->setDisplayOptions('form', [
-      'type' => 'boolean_checkbox',
-      'weight' => 6,
-    ]);
+    // Participants.
+    $fields['participants'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Participants'))
+      ->setDescription(t('Users registered for the event.'))
+      ->setSetting('target_type', 'user')
+      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
+      ->setDisplayOptions('form', [
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 8,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'hidden',
+        'weight' => 8,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 
-$fields['participants'] = BaseFieldDefinition::create('entity_reference')
-  ->setLabel(t('Participants'))
-  ->setDescription(t('Users registered for the event.'))
-  ->setSetting('target_type', 'user')
-  ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
-  ->setDisplayOptions('form', [
-    'type' => 'entity_reference_autocomplete',
-    'weight' => 8,
-  ])
-  ->setDisplayOptions('view', [
-    'label' => 'hidden',
-    'type' => 'hidden',
-    'weight' => 8,
-  ])
-  ->setDisplayConfigurable('form', TRUE)
-  ->setDisplayConfigurable('view', TRUE);
-
-return $fields;
-}
+    return $fields;
+  }
 }

@@ -3,8 +3,10 @@ parameters:
 
 services:
   innowise_events.weather_service:
-    class: Drupal\innowise_events\Service\WeatherService
-    arguments: ['@http_client', '%weather_api_key%']
+    class: 'Drupal\innowise_events\Service\WeatherService'
+    arguments:
+      - '@http_client'
+      - '%weather_api_key%'
 
   innowise_events.schema_extension:
     class: Drupal\innowise_events\Plugin\GraphQL\SchemaExtension\InnowiseEventsSchemaExtension

@@ -18,13 +18,13 @@ class EventAccessControlHandler extends EntityAccessControlHandler {
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     switch ($operation) {
       case 'view':
-        return AccessResult::allowed();
+        return AccessResult::allowed()->cachePerPermissions();
 
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'administer event entities');
-
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'administer event entities');
+        return AccessResult::allowedIfHasPermission($account, 'administer event entities')
+          ->cachePerPermissions();
+
     }
 
     return AccessResult::neutral();
@@ -34,6 +34,7 @@ class EventAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'administer event entities');
+    return AccessResult::allowedIfHasPermission($account, 'administer event entities')
+      ->cachePerPermissions();
   }
 }
