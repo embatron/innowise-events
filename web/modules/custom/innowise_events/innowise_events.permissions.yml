@@ -1,4 +1,0 @@
-view event:
-  title: 'View Event'
-  description: 'Allow users to view Event entities.'
-  restrict access: false
