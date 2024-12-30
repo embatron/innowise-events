@@ -89,7 +89,7 @@ class EventController extends ControllerBase {
       return $response;
     }
 
-    $max_participants = $event_entity->get('max_participants')->value ?? PHP_INT_MAX;
+    $max_participants = $event_entity->get('max_participants')->value;
     if (count($participants->getValue()) >= $max_participants) {
       $response->addCommand(new HtmlCommand('#register-message', '<div class="messages messages--error">Registration is closed as the event is full.</div>'));
       return $response;
